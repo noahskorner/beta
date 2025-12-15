@@ -7,7 +7,8 @@
     "dev": "turbo run dev",
     "build": "turbo run build",
     "lint": "turbo run lint",
-    "prisma:migrate:dev": "turbo run prisma:migrate:dev"
+    "prisma:migrate:dev": "turbo run prisma:migrate:dev",
+    "setup": "docker compose up -d"
   },
   "keywords": [],
   "author": "",
@@ -20,6 +21,6 @@
   ],
   "devDependencies": {
     "dotenv-cli": "^8.0.0",
-    "turbo": "^2.5.4"
+    "turbo": "^2.6.3"
   }
 }

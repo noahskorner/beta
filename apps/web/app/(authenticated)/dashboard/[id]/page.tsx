@@ -1,4 +1,3 @@
-import { Chat } from './chat';
 import { GetFileFacade } from '@/app/api/files/[id]/get-file.facade';
 import { File } from './file';
 
@@ -21,9 +20,6 @@ export default async function FilePage({ params }: FilePageProps) {
         <div className="w-full max-w-3xl">
           <File id={id} content={file.content ?? ''} />
         </div>
-      </div>
-      <div className="w-full max-w-2xl relative h-full flex items-center justify-center p-2 max-h-svh overflow-hidden">
-        <Chat />
       </div>
     </div>
   );

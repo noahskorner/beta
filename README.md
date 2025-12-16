@@ -1,13 +1,13 @@
-# 🛠️ alpha – Full‑Stack Monorepo (2025 Edition)
+# 🛠️ beta - The greatest collaboration tool ever created
 
-Welcome to **alpha**, a modern Turborepo‑powered monorepo featuring Next.js 14, shadcn/ui, Prisma, and a Postgres (pgvector‑enabled) database. Built for rapid prototyping **and** production‑grade scaling.
+Welcome to **beta**, a modern Turborepo‑powered monorepo featuring Next.js 14, shadcn/ui, Prisma, and a Postgres (pgvector‑enabled) database. Built for rapid prototyping **and** production‑grade scaling.
 
 ---
 
 ## 📁 Project Structure
 
 ```
-alpha
+beta
 │  .node-version             # Node LTS pin
 │  docker-compose.yml        # Postgres + pgvector service
 │  turbo.json                # Turborepo pipeline

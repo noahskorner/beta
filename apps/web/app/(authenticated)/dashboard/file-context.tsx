@@ -19,8 +19,10 @@ type FilesContextType = {
 const FilesContext = createContext<FilesContextType>({
   files: [],
   tree: [],
-  createFile: async (request: CreateFileRequest) => {},
-  createFolder: async (request: CreateFileRequest) => {},
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  createFile: async (_request: CreateFileRequest) => {},
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  createFolder: async (_request: CreateFileRequest) => {},
 });
 
 export interface FilesProviderProps {

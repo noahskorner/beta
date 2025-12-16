@@ -7,6 +7,10 @@
     "prisma:migrate:dev": {
       "cache": false,
       "outputs": []
+    },
+    "prisma:generate": {
+      "cache": false,
+      "outputs": []
     }
   }
 }

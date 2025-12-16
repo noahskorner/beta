@@ -8,7 +8,6 @@ CREATE TABLE "file" (
     "updated_at" TIMESTAMP(3) NOT NULL,
     "is_folder" BOOLEAN NOT NULL DEFAULT false,
     "path" TEXT NOT NULL,
-    "content" TEXT,
 
     CONSTRAINT "file_pkey" PRIMARY KEY ("id")
 );

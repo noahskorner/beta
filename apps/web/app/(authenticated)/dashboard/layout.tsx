@@ -1,6 +1,6 @@
 import { cookies } from 'next/headers';
 import { Sidebar } from './sidebar';
-import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
+import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { FilesProvider } from './file-context';
 import { FindFilesFacade } from '../../api/files/find-files.facade';
 import { FindFileResponse } from '../../api/files/find-files.response';
@@ -8,6 +8,7 @@ import { getServerSession } from 'next-auth';
 import { AUTH } from '@/app/auth';
 import { redirect } from 'next/navigation';
 import { ROUTES } from '@/app/routes';
+import { Toolbar } from './toolbar';
 
 const loadFiles = async (): Promise<FindFileResponse[]> => {
   try {
@@ -35,8 +36,10 @@ export default async function Layout({ children }: { children: React.ReactNode }
     <SidebarProvider defaultOpen={defaultOpen}>
       <FilesProvider files={files}>
         <Sidebar email={email} />
-        <SidebarTrigger className="cursor-pointer relative top-2 left-2 z-10" />
-        <main className="w-full">{children}</main>
+        <SidebarInset>
+          <Toolbar email={email} name={session?.user?.name} />
+          <main className="flex-1 overflow-auto px-4 py-6">{children}</main>
+        </SidebarInset>
       </FilesProvider>
     </SidebarProvider>
   );

@@ -38,19 +38,16 @@ export function Toolbar({ email, name }: ToolbarProps) {
   );
 
   return (
-    <header className="flex h-14 items-center gap-3 border-b bg-background px-4">
-      <SidebarTrigger className="-ml-1" />
-      <Button variant="outline" size="sm" type="button" onClick={onCreateFolderClick}>
-        <FolderOpen className="mr-2 size-4" />
-        New folder
-      </Button>
-      <Button size="sm" type="button" onClick={onCreateFileClick}>
-        <SquarePen className="mr-2 size-4" />
-        New file
-      </Button>
-      <Separator orientation="vertical" className="h-6" />
-      <div className="flex flex-1 items-center gap-3">
-        <h1 className="text-sm font-semibold leading-none">Dashboard</h1>
+    <header className="flex h-11 w-full items-center justify-between border-b bg-sidebar px-2">
+      <div className="flex items-center justify-between">
+        <SidebarTrigger variant="ghost" size="icon" />
+        <Separator orientation="vertical" className="h-6" />
+        <Button onClick={onCreateFileClick} variant="ghost" size={'icon'} className="size-7">
+          <SquarePen />
+        </Button>
+        <Button onClick={onCreateFolderClick} variant="ghost" size={'icon'} className="size-7">
+          <FolderOpen />
+        </Button>
       </div>
       <div className="flex items-center gap-2">
         <AccountDropdown user={user} />

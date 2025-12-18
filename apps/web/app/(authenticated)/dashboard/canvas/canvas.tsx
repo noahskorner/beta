@@ -125,9 +125,17 @@ export function Canvas({ storageKey = STORAGE_KEY }: CanvasProps) {
   const [edges, setEdges, onEdgesChange] = useEdgesState(defaultState.edges);
   const [viewport, setViewport] = useState<Viewport>(defaultState.viewport);
   const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance | null>(null);
+  const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [newTitle, setNewTitle] = useState('');
   const [newBody, setNewBody] = useState('');
+  const [editTitle, setEditTitle] = useState('');
+  const [editBody, setEditBody] = useState('');
   const [hydrated, setHydrated] = useState(false);
+
+  const selectedNode = useMemo(
+    () => nodes.find((node) => node.id === selectedNodeId),
+    [nodes, selectedNodeId]
+  );
 
   useEffect(() => {
     if (typeof window === 'undefined') {
@@ -199,7 +207,7 @@ export function Canvas({ storageKey = STORAGE_KEY }: CanvasProps) {
           id: uuid(),
           type: 'card',
           position,
-          data: { title, body },
+          data: { title, body: body || undefined },
         },
       ];
     });
@@ -207,12 +215,35 @@ export function Canvas({ storageKey = STORAGE_KEY }: CanvasProps) {
     setNewBody('');
   }, [newBody, newTitle, reactFlowInstance, setNodes]);
 
+  const handleUpdateCard = useCallback(() => {
+    if (!selectedNodeId) {
+      return;
+    }
+
+    const title = editTitle.trim() || 'Untitled card';
+    const body = editBody.trim();
+
+    setNodes((current) =>
+      current.map((node) =>
+        node.id === selectedNodeId
+          ? {
+              ...node,
+              data: { ...node.data, title, body: body || undefined },
+            }
+          : node
+      )
+    );
+  }, [editBody, editTitle, selectedNodeId, setNodes]);
+
   const handleReset = useCallback(() => {
     const freshState = createDefaultState();
     setNodes(freshState.nodes);
     setEdges(freshState.edges);
     setViewport(freshState.viewport);
     reactFlowInstance?.setViewport(freshState.viewport, { duration: 0 });
+    setSelectedNodeId(null);
+    setEditTitle('');
+    setEditBody('');
     setNewTitle('');
     setNewBody('');
   }, [reactFlowInstance, setEdges, setNodes]);
@@ -228,6 +259,24 @@ export function Canvas({ storageKey = STORAGE_KEY }: CanvasProps) {
     setViewport(nextViewport);
   }, []);
 
+  const handleSelectionChange = useCallback(
+    ({ nodes: selectedNodes }: { nodes: Node<CanvasNodeData>[] }) => {
+      setSelectedNodeId(selectedNodes[0]?.id ?? null);
+    },
+    []
+  );
+
+  useEffect(() => {
+    if (!selectedNode) {
+      setEditTitle('');
+      setEditBody('');
+      return;
+    }
+
+    setEditTitle(selectedNode.data.title);
+    setEditBody(selectedNode.data.body ?? '');
+  }, [selectedNode]);
+
   return (
     <div className="relative h-full w-full overflow-hidden rounded-lg border border-border/70 bg-muted/20">
       <ReactFlow
@@ -239,6 +288,7 @@ export function Canvas({ storageKey = STORAGE_KEY }: CanvasProps) {
         onConnect={onConnect}
         onMoveEnd={onMoveEnd}
         onInit={setReactFlowInstance}
+        onSelectionChange={handleSelectionChange}
         nodeTypes={nodeTypes}
         panOnScroll
         selectionOnDrag
@@ -247,45 +297,95 @@ export function Canvas({ storageKey = STORAGE_KEY }: CanvasProps) {
       >
         <Background gap={22} size={1} color="hsl(var(--muted-foreground)/0.3)" />
         <Controls className="border border-border/70 bg-card/90 shadow-sm" />
+      </ReactFlow>
 
-        <Panel position="top-left" className="mt-2 ml-2">
-          <Card className="w-[420px] border-border/70 bg-card/90 shadow-lg backdrop-blur">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm">Canvas controls</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="flex gap-2">
-                <Input
-                  value={newTitle}
-                  onChange={(event) => setNewTitle(event.target.value)}
-                  placeholder="Card title"
-                  className="text-sm"
-                />
-                <Button onClick={handleAddCard} size="sm" className="shrink-0">
-                  <Plus className="mr-2 size-4" />
-                  Add
-                </Button>
-              </div>
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 flex justify-center px-4 pb-3">
+        <div className="pointer-events-auto w-full max-w-5xl rounded-2xl border border-border/70 bg-card/95 px-4 py-3 shadow-xl backdrop-blur">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm">Canvas toolbar</CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-3 p-0">
+            <div className="flex flex-col gap-2 md:flex-row md:items-center md:gap-3">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                New card
+              </p>
+              <Input
+                value={newTitle}
+                onChange={(event) => setNewTitle(event.target.value)}
+                placeholder="Title"
+                className="text-sm md:w-48"
+              />
               <textarea
                 value={newBody}
                 onChange={(event) => setNewBody(event.target.value)}
-                placeholder="Optional details"
-                className="min-h-[72px] w-full rounded-md border border-border/70 bg-background px-3 py-2 text-sm outline-none ring-offset-background placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                placeholder="Optional body"
+                rows={1}
+                className="h-10 w-full resize-none rounded-md border border-border/70 bg-background px-3 py-2 text-sm outline-none ring-offset-background placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 md:flex-1"
               />
-              <Separator />
-              <div className="flex items-center justify-between gap-3">
-                <p className="text-xs text-muted-foreground">
-                  Stored locally in <code className="font-mono text-[11px]">{storageKey}</code>.
-                </p>
+              <Button onClick={handleAddCard} size="sm" className="shrink-0">
+                <Plus className="mr-2 size-4" />
+                Add
+              </Button>
+            </div>
+
+            <Separator />
+
+            <div className="flex flex-col gap-2 md:flex-row md:items-center md:gap-3">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                Selected
+              </p>
+              <Input
+                value={editTitle}
+                onChange={(event) => setEditTitle(event.target.value)}
+                placeholder="Select a card to edit"
+                disabled={!selectedNode}
+                className="text-sm md:w-48"
+              />
+              <textarea
+                value={editBody}
+                onChange={(event) => setEditBody(event.target.value)}
+                placeholder="Body for selected card"
+                rows={1}
+                disabled={!selectedNode}
+                className={cn(
+                  'h-10 w-full resize-none rounded-md border border-border/70 bg-background px-3 py-2 text-sm outline-none ring-offset-background placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 md:flex-1',
+                  !selectedNode && 'opacity-60'
+                )}
+              />
+              <Button
+                onClick={handleUpdateCard}
+                size="sm"
+                variant="secondary"
+                className="shrink-0"
+                disabled={!selectedNode}
+              >
+                Update
+              </Button>
+            </div>
+
+            <Separator />
+
+            <div className="flex flex-col gap-2 text-xs text-muted-foreground md:flex-row md:items-center md:justify-between">
+              <div className="flex items-center gap-2">
+                <span className="font-medium">
+                  {selectedNode ? `Editing: ${selectedNode.data.title}` : 'No card selected'}
+                </span>
+                <span className="hidden md:inline-flex">•</span>
+                <span>
+                  Stored locally in{' '}
+                  <code className="font-mono text-[11px]">{storageKey}</code>.
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
                 <Button onClick={handleReset} variant="outline" size="sm" className="gap-2">
                   <RotateCcw className="size-4" />
-                  Reset
+                  Reset canvas
                 </Button>
               </div>
-            </CardContent>
-          </Card>
-        </Panel>
-      </ReactFlow>
+            </div>
+          </CardContent>
+        </div>
+      </div>
     </div>
   );
 }

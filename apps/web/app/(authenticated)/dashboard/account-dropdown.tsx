@@ -12,13 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import {
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  useSidebar,
-} from '@/components/ui/sidebar';
-import { EllipsisVertical, Laptop, Moon, Sun } from 'lucide-react';
+import { Laptop, Moon, Sun } from 'lucide-react';
 import { signOut } from 'next-auth/react';
 import { useTheme } from 'next-themes';
 import { useEffect, useMemo } from 'react';
@@ -26,16 +20,13 @@ import { cn } from '@/lib/utils';
 
 export function AccountDropdown({
   user,
-  variant = 'sidebar',
 }: {
   user: {
     name: string;
     email: string;
     avatar: string;
   };
-  variant?: 'sidebar' | 'toolbar';
 }) {
-  const { isMobile } = useSidebar();
   const { theme, resolvedTheme, setTheme } = useTheme();
   const isDark = resolvedTheme === 'dark';
 
@@ -77,50 +68,8 @@ export function AccountDropdown({
     signOut();
   };
 
-  const trigger =
-    variant === 'toolbar' ? (
-      <Button
-        variant="ghost"
-        size="sm"
-        className="h-9 px-2"
-        data-slot="account-dropdown-trigger"
-      >
-        <Avatar className="h-8 w-8">
-          <AvatarImage src={user.avatar} alt={user.name} />
-          <AvatarFallback>{initials}</AvatarFallback>
-        </Avatar>
-        <div className="hidden text-left sm:flex sm:flex-col sm:px-2">
-          <span className="text-sm font-medium leading-tight">{user.name || 'Account'}</span>
-          <span className="text-xs text-muted-foreground leading-tight">{user.email}</span>
-        </div>
-      </Button>
-    ) : (
-      <SidebarMenuButton
-        size="lg"
-        className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-      >
-        <Avatar className="h-8 w-8 rounded-lg grayscale">
-          <AvatarImage src={user.avatar} alt={user.name} />
-          <AvatarFallback className="rounded-lg">{initials}</AvatarFallback>
-        </Avatar>
-        <div className="grid flex-1 text-left text-sm leading-tight">
-          <span className="truncate font-medium">{user.name}</span>
-          <span className="text-muted-foreground truncate text-xs">{user.email}</span>
-        </div>
-        <EllipsisVertical />
-      </SidebarMenuButton>
-    );
-
   const content = (
-    <DropdownMenuContent
-      className={cn(
-        'min-w-56 rounded-lg',
-        variant === 'sidebar' && 'w-(--radix-dropdown-menu-trigger-width)'
-      )}
-      side={isMobile ? 'bottom' : 'right'}
-      align="end"
-      sideOffset={4}
-    >
+    <DropdownMenuContent className={cn('min-w-56 rounded-lg')} side="bottom" sideOffset={4}>
       <div className="flex items-center gap-3 px-2 py-1.5">
         <Avatar className="h-9 w-9">
           <AvatarImage src={user.avatar} alt={user.name} />
@@ -155,23 +104,21 @@ export function AccountDropdown({
     </DropdownMenuContent>
   );
 
-  if (variant === 'toolbar') {
-    return (
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>{trigger}</DropdownMenuTrigger>
-        {content}
-      </DropdownMenu>
-    );
-  }
-
   return (
-    <SidebarMenu>
-      <SidebarMenuItem>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>{trigger}</DropdownMenuTrigger>
-          {content}
-        </DropdownMenu>
-      </SidebarMenuItem>
-    </SidebarMenu>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant="ghost"
+          className="h-11 w-11 rounded-full"
+          data-slot="account-dropdown-trigger"
+        >
+          <Avatar className="h-8 w-8">
+            <AvatarImage src={user.avatar} alt={user.name} />
+            <AvatarFallback>{initials}</AvatarFallback>
+          </Avatar>
+        </Button>
+      </DropdownMenuTrigger>
+      {content}
+    </DropdownMenu>
   );
 }

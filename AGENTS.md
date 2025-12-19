@@ -9,6 +9,38 @@ Welcome to this Turborepo-based Next.js + Prisma monorepo. Use this guide to kee
 - `packages/database/` contains the Prisma schema, migrations, and generated client.
 - `.turbo/` and `.next/` are build caches; avoid committing them.
 
+## Dependency Installation Rules
+
+**Install dependencies at the narrowest possible scope.**
+
+- If a dependency is only used by a specific app or package, install it **inside that app or package**, not at the repo root.
+- Only add dependencies to the root `package.json` if they are:
+  - Shared tooling (e.g., Turborepo, ESLint, Prettier), or
+  - Required by multiple apps/packages.
+
+**Examples:**
+
+- If a dependency is needed by the Next.js app, install it in:
+  ```bash
+  cd apps/web
+  npm install <package>
+  ```
+
+````
+
+(updates `apps/web/package.json`)
+
+- If a dependency is only used by the Prisma/database layer:
+
+  ```bash
+  cd packages/database
+  npm install <package>
+  ```
+
+- Avoid installing app-specific or package-specific dependencies at the root unless there is a clear, documented reason.
+
+This keeps dependency graphs clean, reduces unnecessary rebuilds, and avoids accidental coupling between apps.
+
 ## Build, Test, and Development Commands
 
 - Install once at root: `npm install`.
@@ -17,6 +49,7 @@ Welcome to this Turborepo-based Next.js + Prisma monorepo. Use this guide to kee
 - Lint (Next ESLint flat config): `npm run lint`.
 - Bring up Postgres/pgvector: `npm run setup` (runs `docker compose up -d`).
 - Prisma workflows (env read from `apps/web/.env.local`):
+
   - `npm run prisma:migrate:dev` (root turbo task) or `npm --prefix packages/database run prisma:migrate:dev`.
   - Regenerate client: `npm --prefix packages/database run prisma:generate`.
 
@@ -43,3 +76,4 @@ Welcome to this Turborepo-based Next.js + Prisma monorepo. Use this guide to kee
 - Copy env templates from `apps/web/.env.example` to `.env.local`; never commit secrets.
 - Database URLs must match the docker-compose service; restart containers after env changes.
 - Clean stale builds with `npx turbo clean` (or remove `.turbo/`) when caches misbehave.
+````

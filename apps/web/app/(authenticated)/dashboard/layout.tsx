@@ -37,7 +37,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
       <FilesProvider files={files}>
         <Toolbar email={email} name={session?.user?.name} />
         <div className="flex flex-1 min-h-0 w-full">
-          <Sidebar email={email} className="md:top-11 md:h-[calc(100svh-3.5rem)]" />
+          <Sidebar className="md:top-11 md:h-[calc(100svh-3.5rem)]" />
           <SidebarInset className="flex-1 min-h-0">
             <main className="flex-1 overflow-auto">{children}</main>
           </SidebarInset>

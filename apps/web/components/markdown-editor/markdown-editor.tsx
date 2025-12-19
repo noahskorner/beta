@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useTheme } from 'next-themes';
 import CodeMirror, {
   Decoration,
   DecorationSet,
@@ -9,6 +10,7 @@ import CodeMirror, {
   ViewPlugin,
   ViewUpdate,
 } from '@uiw/react-codemirror';
+import { githubDark, githubLight } from '@uiw/codemirror-theme-github';
 import './markdown-editor.css';
 import { markdown } from '@codemirror/lang-markdown';
 import { languages } from '@codemirror/language-data';
@@ -30,7 +32,12 @@ export interface MarkdownEditorProps {
 }
 
 export const MarkdownEditor = ({ content, onContentChange }: MarkdownEditorProps) => {
+  const { resolvedTheme } = useTheme();
   const [value, setValue] = useState(content);
+
+  useEffect(() => {
+    setValue(content);
+  }, [content]);
 
   const onChange = (val: string) => {
     setValue(val);
@@ -39,9 +46,9 @@ export const MarkdownEditor = ({ content, onContentChange }: MarkdownEditorProps
 
   return (
     <CodeMirror
-      className="w-full outline-none bg-transparent"
+      className="w-full h-full outline-none bg-transparent"
       value={value}
-      theme={'none'}
+      theme={resolvedTheme === 'dark' ? githubDark : githubLight}
       extensions={[mdExtension, markdownPlugin]}
       onChange={onChange}
     />

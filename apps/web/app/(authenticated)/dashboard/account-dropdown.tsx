@@ -109,7 +109,7 @@ export function AccountDropdown({
       <DropdownMenuTrigger asChild>
         <Button
           variant="ghost"
-          className="h-11 w-11 rounded-full"
+          className="h-10 w-10 rounded-full"
           data-slot="account-dropdown-trigger"
         >
           <Avatar className="h-8 w-8">

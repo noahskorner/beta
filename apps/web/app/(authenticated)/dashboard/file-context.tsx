@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, ReactNode, useMemo } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useMemo, useCallback } from 'react';
 import { FindFileResponse } from '../../api/files/find-files.response';
 import { buildFileTree, FileNode } from '../../utils/build-file-tree';
 import { CreateFileResponse } from '../../api/files/create-file.response';
@@ -8,12 +8,15 @@ import { toast } from 'sonner';
 import { CreateFileRequest } from '../../api/files/create-file.request';
 import { ROUTES } from '../../routes';
 import { useRouter } from 'next/navigation';
+import { UpdateFileRequest } from '../../api/files/[id]/update-file.request';
+import { FindFilesResponse } from '../../api/files/find-files.response';
 
 type FilesContextType = {
   files: FindFileResponse[];
   tree: FileNode[];
   createFile: (request: CreateFileRequest) => Promise<void>;
   createFolder: (request: CreateFileRequest) => Promise<void>;
+  moveFile: (fileId: string, newPath: string) => Promise<void>;
 };
 
 const FilesContext = createContext<FilesContextType>({
@@ -23,6 +26,8 @@ const FilesContext = createContext<FilesContextType>({
   createFile: async (_request: CreateFileRequest) => {},
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   createFolder: async (_request: CreateFileRequest) => {},
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  moveFile: async (_fileId: string, _newPath: string) => {},
 });
 
 export interface FilesProviderProps {
@@ -34,8 +39,19 @@ export const FilesProvider = ({ files: initialFiles, children }: FilesProviderPr
   const router = useRouter();
   const [files, setFiles] = useState<FindFileResponse[]>(initialFiles);
   const tree = useMemo(() => {
-    return buildFileTree(files);
+    return buildFileTree([...files]);
   }, [files]);
+
+  const refreshFiles = useCallback(async (): Promise<FindFileResponse[]> => {
+    const response = await fetch('/api/files');
+    if (!response.ok) {
+      throw new Error(response.statusText);
+    }
+
+    const data: FindFilesResponse = await response.json();
+    setFiles(data.files);
+    return data.files;
+  }, []);
 
   const createFile = async (request: CreateFileRequest) => {
     try {
@@ -86,6 +102,34 @@ export const FilesProvider = ({ files: initialFiles, children }: FilesProviderPr
     }
   };
 
+  const moveFile = useCallback(
+    async (fileId: string, newPath: string) => {
+      try {
+        const response = await fetch(`/api/files/${fileId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            path: newPath,
+          } satisfies UpdateFileRequest),
+        });
+
+        if (!response.ok) {
+          throw new Error(response.statusText);
+        }
+
+        await refreshFiles();
+        toast.success('File moved successfully!');
+      } catch (error) {
+        console.error(error);
+        toast.error('Unable to move file. Please try again later.');
+        throw error;
+      }
+    },
+    [refreshFiles]
+  );
+
   return (
     <FilesContext.Provider
       value={{
@@ -93,6 +137,7 @@ export const FilesProvider = ({ files: initialFiles, children }: FilesProviderPr
         tree: tree,
         createFile,
         createFolder,
+        moveFile,
       }}
     >
       {children}

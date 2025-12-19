@@ -5,6 +5,10 @@ export const UpdateFileParamsSchema = z.object({
 });
 export const UpdateFileRequestSchema = z
   .object({
+    path: z.string().optional().openapi({
+      description: 'New path for the file or folder',
+      example: '/documents/notes.md',
+    }),
     content: z.string().optional().openapi({
       description: 'Content of the node',
       example: '# This is markdown',

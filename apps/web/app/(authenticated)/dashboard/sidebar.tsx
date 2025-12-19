@@ -9,11 +9,10 @@ import { FileExplorer } from './file-explorer';
 import { cn } from '../../../lib/utils';
 
 export interface SidebarProps {
-  email: string;
   className?: string;
 }
 
-export async function Sidebar({ email: _email, className }: SidebarProps) {
+export async function Sidebar({ className }: SidebarProps) {
   return (
     <SidebarComponent className={cn('border-r-none', className)}>
       <SidebarContent>

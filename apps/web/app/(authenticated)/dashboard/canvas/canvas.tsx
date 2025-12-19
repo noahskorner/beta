@@ -6,12 +6,9 @@ import ReactFlow, {
   Connection,
   Controls,
   Edge,
-  Handle,
   MarkerType,
   Node,
   NodeProps,
-  Panel,
-  Position,
   ReactFlowInstance,
   Viewport,
   addEdge,
@@ -20,17 +17,12 @@ import ReactFlow, {
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
+import { CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
 import { Plus, RotateCcw } from 'lucide-react';
 import { uuid } from '@/app/utils/uuid';
-
-type CanvasNodeData = {
-  title: string;
-  body?: string;
-};
+import { CanvasCardNode, CanvasNodeData } from './canvas-card-node';
 
 type CanvasState = {
   nodes: Node<CanvasNodeData>[];
@@ -47,8 +39,7 @@ const BASE_CANVAS_STATE: CanvasState = {
       type: 'card',
       position: { x: 0, y: 0 },
       data: {
-        title: 'Ideas hub',
-        body: 'Drag cards around the canvas and drag from the handles to connect them.',
+        content: 'Drag cards around the canvas and drag from the handles to connect them.',
       },
     },
     {
@@ -56,8 +47,7 @@ const BASE_CANVAS_STATE: CanvasState = {
       type: 'card',
       position: { x: 240, y: 120 },
       data: {
-        title: 'Outline thoughts',
-        body: 'Drop in quick thoughts, then arrange them visually to see connections.',
+        content: 'Drop in quick thoughts, then arrange them visually to see connections.',
       },
     },
   ],
@@ -85,36 +75,6 @@ const createDefaultState = (): CanvasState => ({
   viewport: { ...BASE_CANVAS_STATE.viewport },
 });
 
-function CanvasCardNode({ data, selected }: NodeProps<CanvasNodeData>) {
-  return (
-    <Card
-      className={cn(
-        'relative min-w-[220px] max-w-70 border-border/70 bg-card/90 shadow-sm backdrop-blur',
-        selected && 'ring-2 ring-primary/50'
-      )}
-    >
-      <Handle
-        type="target"
-        position={Position.Left}
-        className="!size-3 !rounded-full !border-none !bg-primary/70"
-      />
-      <Handle
-        type="source"
-        position={Position.Right}
-        className="!size-3 !rounded-full !border-none !bg-primary/70"
-      />
-      <CardHeader className="space-y-1 px-4 py-3">
-        <CardTitle className="text-sm leading-tight">{data.title}</CardTitle>
-      </CardHeader>
-      {data.body ? (
-        <CardContent className="px-4 pb-4 pt-0">
-          <p className="whitespace-pre-wrap text-xs text-muted-foreground">{data.body}</p>
-        </CardContent>
-      ) : null}
-    </Card>
-  );
-}
-
 export interface CanvasProps {
   storageKey?: string;
 }
@@ -126,10 +86,8 @@ export function Canvas({ storageKey = STORAGE_KEY }: CanvasProps) {
   const [viewport, setViewport] = useState<Viewport>(defaultState.viewport);
   const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance | null>(null);
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
-  const [newTitle, setNewTitle] = useState('');
-  const [newBody, setNewBody] = useState('');
-  const [editTitle, setEditTitle] = useState('');
-  const [editBody, setEditBody] = useState('');
+  const [newContent, setNewContent] = useState('');
+  const [editContent, setEditContent] = useState('');
   const [hydrated, setHydrated] = useState(false);
 
   const selectedNode = useMemo(
@@ -195,8 +153,7 @@ export function Canvas({ storageKey = STORAGE_KEY }: CanvasProps) {
   );
 
   const handleAddCard = useCallback(() => {
-    const title = newTitle.trim() || 'New card';
-    const body = newBody.trim();
+    const content = newContent.trim();
     setNodes((current) => {
       const basePosition = { x: 160 + current.length * 30, y: 140 + current.length * 24 };
       const position = reactFlowInstance?.project(basePosition) ?? basePosition;
@@ -207,33 +164,43 @@ export function Canvas({ storageKey = STORAGE_KEY }: CanvasProps) {
           id: uuid(),
           type: 'card',
           position,
-          data: { title, body: body || undefined },
+          data: { content: content || undefined },
         },
       ];
     });
-    setNewTitle('');
-    setNewBody('');
-  }, [newBody, newTitle, reactFlowInstance, setNodes]);
+
+    setNewContent('');
+  }, [newContent, reactFlowInstance, setNodes]);
 
   const handleUpdateCard = useCallback(() => {
     if (!selectedNodeId) {
       return;
     }
 
-    const title = editTitle.trim() || 'Untitled card';
-    const body = editBody.trim();
+    const content = editContent.trim();
 
     setNodes((current) =>
       current.map((node) =>
         node.id === selectedNodeId
           ? {
               ...node,
-              data: { ...node.data, title, body: body || undefined },
+              data: { ...node.data, content: content || undefined },
             }
           : node
       )
     );
-  }, [editBody, editTitle, selectedNodeId, setNodes]);
+  }, [editContent, selectedNodeId, setNodes]);
+
+  const handleCardContentChange = useCallback(
+    (nodeId: string, content: string) => {
+      setNodes((current) =>
+        current.map((node) =>
+          node.id === nodeId ? { ...node, data: { ...node.data, content: content } } : node
+        )
+      );
+    },
+    [setNodes]
+  );
 
   const handleReset = useCallback(() => {
     const freshState = createDefaultState();
@@ -242,17 +209,20 @@ export function Canvas({ storageKey = STORAGE_KEY }: CanvasProps) {
     setViewport(freshState.viewport);
     reactFlowInstance?.setViewport(freshState.viewport, { duration: 0 });
     setSelectedNodeId(null);
-    setEditTitle('');
-    setEditBody('');
-    setNewTitle('');
-    setNewBody('');
+    setEditContent('');
+    setNewContent('');
   }, [reactFlowInstance, setEdges, setNodes]);
 
   const nodeTypes = useMemo(
     () => ({
-      card: CanvasCardNode,
+      card: (props: NodeProps<CanvasNodeData>) => (
+        <CanvasCardNode
+          {...props}
+          onContentChange={(content) => handleCardContentChange(props.id, content)}
+        />
+      ),
     }),
-    []
+    [handleCardContentChange]
   );
 
   const onMoveEnd = useCallback((_event: unknown, nextViewport: Viewport) => {
@@ -268,13 +238,11 @@ export function Canvas({ storageKey = STORAGE_KEY }: CanvasProps) {
 
   useEffect(() => {
     if (!selectedNode) {
-      setEditTitle('');
-      setEditBody('');
+      setEditContent('');
       return;
     }
 
-    setEditTitle(selectedNode.data.title);
-    setEditBody(selectedNode.data.body ?? '');
+    setEditContent(selectedNode.data.content ?? '');
   }, [selectedNode]);
 
   return (
@@ -309,16 +277,10 @@ export function Canvas({ storageKey = STORAGE_KEY }: CanvasProps) {
               <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
                 New card
               </p>
-              <Input
-                value={newTitle}
-                onChange={(event) => setNewTitle(event.target.value)}
-                placeholder="Title"
-                className="text-sm md:w-48"
-              />
               <textarea
-                value={newBody}
-                onChange={(event) => setNewBody(event.target.value)}
-                placeholder="Optional body"
+                value={newContent}
+                onChange={(event) => setNewContent(event.target.value)}
+                placeholder="Optional content"
                 rows={1}
                 className="h-10 w-full resize-none rounded-md border border-border/70 bg-background px-3 py-2 text-sm outline-none ring-offset-background placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 md:flex-1"
               />
@@ -334,17 +296,10 @@ export function Canvas({ storageKey = STORAGE_KEY }: CanvasProps) {
               <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
                 Selected
               </p>
-              <Input
-                value={editTitle}
-                onChange={(event) => setEditTitle(event.target.value)}
-                placeholder="Select a card to edit"
-                disabled={!selectedNode}
-                className="text-sm md:w-48"
-              />
               <textarea
-                value={editBody}
-                onChange={(event) => setEditBody(event.target.value)}
-                placeholder="Body for selected card"
+                value={editContent}
+                onChange={(event) => setEditContent(event.target.value)}
+                placeholder="Content for selected card"
                 rows={1}
                 disabled={!selectedNode}
                 className={cn(
@@ -367,13 +322,9 @@ export function Canvas({ storageKey = STORAGE_KEY }: CanvasProps) {
 
             <div className="flex flex-col gap-2 text-xs text-muted-foreground md:flex-row md:items-center md:justify-between">
               <div className="flex items-center gap-2">
-                <span className="font-medium">
-                  {selectedNode ? `Editing: ${selectedNode.data.title}` : 'No card selected'}
-                </span>
                 <span className="hidden md:inline-flex">•</span>
                 <span>
-                  Stored locally in{' '}
-                  <code className="font-mono text-[11px]">{storageKey}</code>.
+                  Stored locally in <code className="font-mono text-[11px]">{storageKey}</code>.
                 </span>
               </div>
               <div className="flex items-center gap-2">

@@ -1,20 +1,10 @@
 'use client';
 
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import {
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarMenuSub,
-} from '@/components/ui/sidebar';
+import { SidebarMenuButton, SidebarMenuItem, SidebarMenuSub } from '@/components/ui/sidebar';
 import { FileTree, FileTreeProps } from './file-tree';
 import { useState } from 'react';
-import {
-  ChevronRight,
-  FolderOpen,
-  PencilLine,
-  SquarePen,
-  Trash,
-} from 'lucide-react';
+import { ChevronRight, FolderOpen, PencilLine, SquarePen, Trash } from 'lucide-react';
 import {
   ContextMenu,
   ContextMenuContent,
@@ -26,7 +16,13 @@ import { useFiles } from './file-context';
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface FolderProps extends FileTreeProps {}
 
-export function Folder({ file: node }: FolderProps) {
+export function Folder({
+  file: node,
+  draggedFile,
+  onDragStart,
+  onDragEnd,
+  onDropOnFolder,
+}: FolderProps) {
   const [isOpen, setIsOpen] = useState(true);
   const { createFile, createFolder } = useFiles();
 
@@ -44,17 +40,46 @@ export function Folder({ file: node }: FolderProps) {
     });
   };
 
+  const canAcceptDrop =
+    draggedFile != null &&
+    draggedFile.id !== node.id &&
+    !node.path.startsWith(`${draggedFile.path}/`);
+
   return (
     <Collapsible
       open={isOpen}
       onOpenChange={setIsOpen}
       className="group/collapsible [&[data-state=open]>li>button>svg:first-child]:rotate-90"
     >
-      <SidebarMenuItem>
+      <SidebarMenuItem
+        onDragOver={(event) => {
+          if (canAcceptDrop) {
+            event.preventDefault();
+            event.dataTransfer.dropEffect = 'move';
+          }
+        }}
+        onDrop={(event) => {
+          if (!canAcceptDrop) return;
+          event.preventDefault();
+          onDropOnFolder(node);
+          setIsOpen(true);
+        }}
+      >
         <ContextMenu>
           <ContextMenuTrigger asChild>
             <CollapsibleTrigger asChild>
-              <SidebarMenuButton size="sm">
+              <SidebarMenuButton
+                size="sm"
+                draggable
+                onDragStart={(event) => {
+                  event.stopPropagation();
+                  event.dataTransfer.effectAllowed = 'move';
+                  event.dataTransfer.setData('text/plain', node.id);
+                  onDragStart(node);
+                }}
+                onDragEnd={onDragEnd}
+                className="cursor-grab"
+              >
                 <ChevronRight className="transition-transform" />
                 {node.name}
               </SidebarMenuButton>
@@ -81,7 +106,14 @@ export function Folder({ file: node }: FolderProps) {
           <CollapsibleContent>
             <SidebarMenuSub className="ml-1 mr-0 pl-1 pr-0">
               {node.children?.map((child) => (
-                <FileTree key={child.name} file={child} />
+                <FileTree
+                  key={child.id}
+                  file={child}
+                  draggedFile={draggedFile}
+                  onDragStart={onDragStart}
+                  onDragEnd={onDragEnd}
+                  onDropOnFolder={onDropOnFolder}
+                />
               ))}
             </SidebarMenuSub>
           </CollapsibleContent>

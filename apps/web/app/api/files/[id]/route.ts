@@ -31,6 +31,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<Update
     await facade.update({
       id,
       content: request.content,
+      path: request.path,
     } satisfies UpdateFileCommand);
     return new NextResponse(null, { status: 204 });
   } catch (error) {

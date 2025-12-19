@@ -17,7 +17,12 @@ import ReactFlow, {
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import { uuid } from '@/app/utils/uuid';
-import { CanvasCardNode, CanvasNodeData } from './canvas-card-node';
+import {
+  CanvasCardNode,
+  CanvasNodeData,
+  DEFAULT_CARD_HEIGHT,
+  DEFAULT_CARD_WIDTH,
+} from './canvas-card-node';
 import { CanvasToolbar, CANVAS_CARD_DRAG_TYPE } from './canvas-toolbar';
 
 type CanvasState = {
@@ -36,6 +41,8 @@ const BASE_CANVAS_STATE: CanvasState = {
       position: { x: 0, y: 0 },
       data: {
         content: 'Drag cards around the canvas and drag from the handles to connect them.',
+        width: DEFAULT_CARD_WIDTH,
+        height: DEFAULT_CARD_HEIGHT,
       },
     },
     {
@@ -44,6 +51,8 @@ const BASE_CANVAS_STATE: CanvasState = {
       position: { x: 240, y: 120 },
       data: {
         content: 'Drop in quick thoughts, then arrange them visually to see connections.',
+        width: DEFAULT_CARD_WIDTH,
+        height: DEFAULT_CARD_HEIGHT,
       },
     },
   ],
@@ -151,6 +160,19 @@ export function Canvas({ storageKey = STORAGE_KEY }: CanvasProps) {
     [setNodes]
   );
 
+  const handleCardResize = useCallback(
+    (nodeId: string, size: { width: number; height: number }) => {
+      setNodes((current) =>
+        current.map((node) =>
+          node.id === nodeId
+            ? { ...node, data: { ...node.data, width: size.width, height: size.height } }
+            : node
+        )
+      );
+    },
+    [setNodes]
+  );
+
   const handleReset = useCallback(() => {
     const freshState = createDefaultState();
     setNodes(freshState.nodes);
@@ -188,7 +210,10 @@ export function Canvas({ storageKey = STORAGE_KEY }: CanvasProps) {
           id: uuid(),
           type: 'card',
           position,
-          data: {},
+          data: {
+            width: DEFAULT_CARD_WIDTH,
+            height: DEFAULT_CARD_HEIGHT,
+          },
         },
       ]);
     },
@@ -201,10 +226,11 @@ export function Canvas({ storageKey = STORAGE_KEY }: CanvasProps) {
         <CanvasCardNode
           {...props}
           onContentChange={(content) => handleCardContentChange(props.id, content)}
+          onResize={(size) => handleCardResize(props.id, size)}
         />
       ),
     }),
-    [handleCardContentChange]
+    [handleCardContentChange, handleCardResize]
   );
 
   const onMoveEnd = useCallback((_event: unknown, nextViewport: Viewport) => {

@@ -8,6 +8,11 @@
   background-color: transparent !important;
 }
 
+.cm-editor .cm-content,
+.cm-editor .cm-line {
+  color: hsl(var(--color-foreground)) !important;
+}
+
 .cm-line {
   font-family: var(--font-inter), sans-serif !important;
   font-size: 14px !important;
@@ -47,30 +52,46 @@
 }
 
 .cm-heading-1 {
-  color: var(--primary);
+  color: var(--color-foreground) !important;
   font-size: 2.25em;
   font-weight: 800;
   line-height: 1.11111em;
 }
 
+.cm-heading-1 * {
+  color: var(--color-foreground) !important;
+}
+
 .cm-heading-2 {
-  color: var(--primary);
+  color: var(--color-foreground) !important;
   font-size: 1.5em;
   font-weight: 700;
   line-height: 1.33333;
 }
 
+.cm-heading-2 * {
+  color: var(--color-foreground) !important;
+}
+
 .cm-heading-3 {
-  color: var(--primary);
+  color: var(--color-foreground) !important;
   font-size: 1.25em;
   font-weight: 600;
   line-height: 1.6;
 }
 
+.cm-heading-3 * {
+  color: var(--color-foreground) !important;
+}
+
 .cm-heading-4 {
-  color: var(--primary);
+  color: var(--color-foreground) !important;
   font-weight: 600;
   line-height: 1.5;
+}
+
+.cm-heading-4 * {
+  color: var(--color-foreground) !important;
 }
 
 .cm-ul-list-item {

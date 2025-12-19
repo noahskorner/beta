@@ -1,9 +1,9 @@
 'use client';
 
-import { SidebarMenuItem, SidebarMenuButton } from '@/components/ui/sidebar';
+import { SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { Folder } from './folder';
 import { FileNode } from '../../utils/build-file-tree';
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { ROUTES } from '@/app/routes';
 
 export interface FileTreeProps {
@@ -15,6 +15,8 @@ export interface FileTreeProps {
 }
 
 export function FileTree({ file, draggedFile, onDragStart, onDragEnd, onDropOnFolder }: FileTreeProps) {
+  const router = useRouter();
+
   return file.isFolder ? (
     <Folder
       file={file}
@@ -24,19 +26,21 @@ export function FileTree({ file, draggedFile, onDragStart, onDragEnd, onDropOnFo
       onDropOnFolder={onDropOnFolder}
     />
   ) : (
-    <SidebarMenuItem
-      key={file.id}
-      draggable
-      onDragStart={(event) => {
-        event.stopPropagation();
-        event.dataTransfer.effectAllowed = 'move';
-        event.dataTransfer.setData('text/plain', file.id);
-        onDragStart(file);
-      }}
-      onDragEnd={onDragEnd}
-    >
-      <SidebarMenuButton size="sm" asChild className="cursor-grab">
-        <Link href={ROUTES.dashboard.detail(file.id)}>{file.name}</Link>
+    <SidebarMenuItem key={file.id}>
+      <SidebarMenuButton
+        size="sm"
+        className="cursor-grab"
+        draggable
+        onClick={() => router.push(ROUTES.dashboard.detail(file.id))}
+        onDragStart={(event) => {
+          event.stopPropagation();
+          event.dataTransfer.effectAllowed = 'move';
+          event.dataTransfer.setData('text/plain', file.id);
+          onDragStart(file);
+        }}
+        onDragEnd={onDragEnd}
+      >
+        {file.name}
       </SidebarMenuButton>
     </SidebarMenuItem>
   );

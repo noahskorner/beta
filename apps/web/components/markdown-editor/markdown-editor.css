@@ -2,6 +2,12 @@
   text-decoration: none !important;
 }
 
+.cm-editor,
+.cm-editor .cm-scroller,
+.cm-editor .cm-content {
+  background-color: transparent !important;
+}
+
 .cm-line {
   font-family: var(--font-inter), sans-serif !important;
   font-size: 14px !important;

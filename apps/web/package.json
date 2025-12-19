@@ -33,7 +33,7 @@
     "@radix-ui/react-tooltip": "^1.2.7",
     "@scalar/nextjs-api-reference": "^0.8.5",
     "@tailwindcss/typography": "^0.5.16",
-    "@uiw/codemirror-theme-github": "^4.25.4",
+    "@uiw/codemirror-theme-vscode": "^4.25.4",
     "@uiw/react-codemirror": "^4.23.14",
     "ai": "^5.0.114",
     "class-variance-authority": "^0.7.1",

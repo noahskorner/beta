@@ -10,7 +10,7 @@ import CodeMirror, {
   ViewPlugin,
   ViewUpdate,
 } from '@uiw/react-codemirror';
-import { githubDark, githubLight } from '@uiw/codemirror-theme-github';
+import { vscodeDark, vscodeLight } from '@uiw/codemirror-theme-vscode';
 import './markdown-editor.css';
 import { markdown } from '@codemirror/lang-markdown';
 import { languages } from '@codemirror/language-data';
@@ -54,7 +54,7 @@ export const MarkdownEditor = ({
       className="w-full h-full outline-none bg-transparent"
       value={value}
       height={height}
-      theme={resolvedTheme === 'dark' ? githubDark : githubLight}
+      theme={resolvedTheme === 'dark' ? vscodeDark : vscodeLight}
       extensions={[mdExtension, markdownPlugin]}
       onChange={onChange}
     />

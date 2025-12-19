@@ -246,7 +246,7 @@ export function Canvas({ storageKey = STORAGE_KEY }: CanvasProps) {
   }, [selectedNode]);
 
   return (
-    <div className="relative h-full w-full overflow-hidden rounded-lg border border-border/70 bg-muted/20">
+    <div className="relative h-full w-full overflow-hidden bg-muted/20">
       <ReactFlow
         nodes={nodes}
         edges={edges}

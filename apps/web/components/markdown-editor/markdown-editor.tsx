@@ -29,9 +29,14 @@ const mdExtension = markdown({
 export interface MarkdownEditorProps {
   content: string;
   onContentChange: (content: string) => void;
+  height?: string;
 }
 
-export const MarkdownEditor = ({ content, onContentChange }: MarkdownEditorProps) => {
+export const MarkdownEditor = ({
+  content,
+  onContentChange,
+  height = '100vh',
+}: MarkdownEditorProps) => {
   const { resolvedTheme } = useTheme();
   const [value, setValue] = useState(content);
 
@@ -48,6 +53,7 @@ export const MarkdownEditor = ({ content, onContentChange }: MarkdownEditorProps
     <CodeMirror
       className="w-full h-full outline-none bg-transparent"
       value={value}
+      height={height}
       theme={resolvedTheme === 'dark' ? githubDark : githubLight}
       extensions={[mdExtension, markdownPlugin]}
       onChange={onChange}

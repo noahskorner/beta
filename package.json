@@ -11,7 +11,8 @@
     "postinstall": "npm run prisma:generate",
     "prisma:migrate:dev": "turbo run prisma:migrate:dev",
     "prisma:generate": "turbo run prisma:generate",
-    "setup": "docker compose up -d && npm run prisma:migrate:dev"
+    "setup": "docker compose up -d && npm run prisma:migrate:dev",
+    "azurite:reset": "bash -lc \"docker compose stop azurite >/dev/null 2>&1 || true; docker compose rm -f azurite >/dev/null 2>&1 || true; vol=$(docker volume ls -q --filter name=azurite-data); if [ -n \\\"$vol\\\" ]; then docker volume rm $vol; fi; docker compose up -d azurite\""
   },
   "keywords": [],
   "author": "",

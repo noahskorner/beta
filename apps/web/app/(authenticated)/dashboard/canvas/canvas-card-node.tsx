@@ -41,7 +41,11 @@ export function CanvasCardNode({ data, selected, onContentChange }: CanvasCardNo
       />
       <CardContent className="px-4 pb-4 pt-0">
         {/* <div className="nodrag rounded-md border border-border/70 bg-background/70 px-2 py-1"> */}
-        <MarkdownEditor content={data.content ?? ''} onContentChange={handleContentChange} />
+        <MarkdownEditor
+          content={data.content ?? ''}
+          onContentChange={handleContentChange}
+          height="200px"
+        />
         {/* </div> */}
       </CardContent>
     </Card>

@@ -3,7 +3,7 @@
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { SidebarMenuButton, SidebarMenuItem, SidebarMenuSub } from '@/components/ui/sidebar';
 import { FileTree, FileTreeProps } from './file-tree';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ChevronRight, FolderOpen, PencilLine, SquarePen, Trash } from 'lucide-react';
 import {
   ContextMenu,
@@ -12,6 +12,7 @@ import {
   ContextMenuTrigger,
 } from '../../../components/ui/context-menu';
 import { useFiles } from './file-context';
+import { cn } from '@/lib/utils';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface FolderProps extends FileTreeProps {}
@@ -44,6 +45,13 @@ export function Folder({
     draggedFile != null &&
     draggedFile.id !== node.id &&
     !node.path.startsWith(`${draggedFile.path}/`);
+  const [isDragOver, setIsDragOver] = useState(false);
+
+  useEffect(() => {
+    if (!draggedFile) {
+      setIsDragOver(false);
+    }
+  }, [draggedFile]);
 
   return (
     <Collapsible
@@ -58,9 +66,21 @@ export function Folder({
             event.dataTransfer.dropEffect = 'move';
           }
         }}
+        onDragEnter={(event) => {
+          if (!canAcceptDrop) return;
+          event.preventDefault();
+          setIsDragOver(true);
+        }}
+        onDragLeave={(event) => {
+          if (!canAcceptDrop) return;
+          const relatedTarget = event.relatedTarget as Node | null;
+          if (relatedTarget && event.currentTarget.contains(relatedTarget)) return;
+          setIsDragOver(false);
+        }}
         onDrop={(event) => {
           if (!canAcceptDrop) return;
           event.preventDefault();
+          setIsDragOver(false);
           onDropOnFolder(node);
           setIsOpen(true);
         }}
@@ -78,7 +98,10 @@ export function Folder({
                   onDragStart(node);
                 }}
                 onDragEnd={onDragEnd}
-                className="cursor-grab"
+                className={cn(
+                  'cursor-grab',
+                  isDragOver && 'bg-primary/10 text-primary ring-1 ring-primary/30'
+                )}
               >
                 <ChevronRight className="transition-transform" />
                 {node.name}

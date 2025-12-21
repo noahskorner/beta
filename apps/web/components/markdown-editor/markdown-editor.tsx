@@ -18,9 +18,9 @@ import { DecorationRange } from './decoration-range';
 import { headings } from './headings';
 import { italics } from './italics';
 import { lists } from './lists';
-import { quotes } from './quotes';
 import { strongs } from './strongs';
 import { tables } from './tables';
+import { horizontalRules } from './horizontal-rules';
 
 const mdExtension = markdown({
   codeLanguages: languages,
@@ -128,9 +128,6 @@ const markdownPlugin = ViewPlugin.fromClass(
           // Italics
           decorations.push(...italics(lineText, isActive, from));
 
-          // Quotes
-          decorations.push(...quotes(lineText, isActive, from, to));
-
           // Headings
           decorations.push(...headings(line, lineText, isActive, from, to));
 
@@ -157,6 +154,9 @@ const markdownPlugin = ViewPlugin.fromClass(
           );
           tableCount = updatedTableCount;
           decorations.push(...tableDecorations);
+
+          // Horizontal Rules
+          decorations.push(...horizontalRules(lineText, isActive, from, to));
 
           // Code
 

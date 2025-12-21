@@ -12,6 +12,7 @@ import { FileExplorer } from './file-explorer';
 import { cn } from '../../../lib/utils';
 import Link from 'next/link';
 import { ROUTES } from '@/app/routes';
+import { ExternalLink } from 'lucide-react';
 
 export interface SidebarProps {
   className?: string;
@@ -33,7 +34,9 @@ export async function Sidebar({ className }: SidebarProps) {
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton asChild>
-                  <Link href={ROUTES.dashboard.canvas}>Canvas</Link>
+                  <Link href={ROUTES.dashboard.canvas}>
+                    Canvas <ExternalLink />
+                  </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { FocusEvent, useEffect, useRef, useState } from 'react';
 import { useTheme } from 'next-themes';
 import CodeMirror, {
   Decoration,
@@ -45,6 +45,7 @@ export const MarkdownEditor = ({
 }: MarkdownEditorProps) => {
   const { resolvedTheme } = useTheme();
   const [value, setValue] = useState(content);
+  const editorViewRef = useRef<EditorView | null>(null);
 
   useEffect(() => {
     setValue(content);
@@ -55,6 +56,20 @@ export const MarkdownEditor = ({
     onContentChange(val);
   };
 
+  const handleBlur = (_event: FocusEvent<HTMLDivElement>) => {
+    const view = editorViewRef.current;
+    if (!view) {
+      onBlur?.();
+      return;
+    }
+
+    const { head } = view.state.selection.main;
+    view.dispatch({
+      selection: { anchor: head },
+    });
+    onBlur?.();
+  };
+
   return (
     <CodeMirror
       className="w-full h-full outline-none bg-transparent"
@@ -63,9 +78,12 @@ export const MarkdownEditor = ({
       theme={resolvedTheme === 'dark' ? vscodeDark : vscodeLight}
       extensions={[mdExtension, markdownPlugin]}
       onChange={onChange}
+      onCreateEditor={(view) => {
+        editorViewRef.current = view;
+      }}
       editable={editable}
       autoFocus={autoFocus}
-      onBlur={onBlur}
+      onBlur={handleBlur}
     />
   );
 };

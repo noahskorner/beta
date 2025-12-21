@@ -125,7 +125,7 @@ export function CanvasCardNode({ data, selected, onContentChange, onResize }: Ca
         className="!z-20 !size-3 !rounded-full !border-none !bg-primary/70"
       />
       <CardContent className="flex h-full min-h-0 flex-col p-0">
-        <div className="flex items-center justify-end border-b p-2">
+        <div className="flex items-center justify-end border-b p-1 bg-background/50 rounded-t-lg">
           <Button size="icon" variant="ghost">
             <WandSparkles />
           </Button>
@@ -138,10 +138,7 @@ export function CanvasCardNode({ data, selected, onContentChange, onResize }: Ca
           onDoubleClick={handleEnableEditing}
         >
           <div
-            className={cn(
-              'h-full',
-              isEditing ? 'nodrag nopan' : 'pointer-events-none select-none'
-            )}
+            className={cn('h-full', isEditing ? 'nodrag nopan' : 'pointer-events-none select-none')}
             onPointerDown={stopEventWhenEditing}
             ref={editorContainerRef}
           >

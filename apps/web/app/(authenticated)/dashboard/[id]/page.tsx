@@ -1,5 +1,6 @@
 import { GetFileFacade } from '@/app/api/files/[id]/get-file.facade';
 import { File } from './file';
+import { loadFile } from '../../../utils/load-file';
 
 export interface FilePageProps {
   params: Promise<{ id: string }>;
@@ -14,11 +15,13 @@ export default async function FilePage({ params }: FilePageProps) {
     return <>Not found.</>;
   }
 
+  const MOCK_FILE_CONTENT = await loadFile('markdown.md');
+
   return (
     <div className="w-full h-full flex items-stretch justify-center">
       <div className="w-full h-full flex p-8 pt-12 justify-center">
         <div className="w-full max-w-3xl">
-          <File id={id} content={file.content ?? ''} />
+          <File id={id} content={MOCK_FILE_CONTENT} />
         </div>
       </div>
     </div>

@@ -116,14 +116,28 @@ export function CanvasCardNode({ data, selected, onContentChange, onResize }: Ca
       />
       <Handle
         type="target"
-        position={Position.Left}
-        className="!z-20 !size-3 !rounded-full !border-none !bg-primary/70"
+        position={Position.Top}
+        className="!z-20 !size-3 !rounded-full !border-none !bg-primary/70 -translate-y-1/2"
       />
+
+      <Handle
+        type="source"
+        position={Position.Bottom}
+        className="!z-20 !size-3 !rounded-full !border-none !bg-primary/70 translate-y-1/2"
+      />
+
+      <Handle
+        type="target"
+        position={Position.Left}
+        className="!z-20 !size-3 !rounded-full !border-none !bg-primary/70 -translate-x-1/2"
+      />
+
       <Handle
         type="source"
         position={Position.Right}
-        className="!z-20 !size-3 !rounded-full !border-none !bg-primary/70"
+        className="!z-20 !size-3 !rounded-full !border-none !bg-primary/70 translate-x-1/2"
       />
+
       <CardContent className="flex h-full min-h-0 flex-col p-0">
         <div className="flex items-center justify-end border-b p-1 bg-background/50 rounded-t-lg">
           <Button size="icon" variant="ghost">

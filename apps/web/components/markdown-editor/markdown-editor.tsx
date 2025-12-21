@@ -1,6 +1,6 @@
 'use client';
 
-import { FocusEvent, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTheme } from 'next-themes';
 import CodeMirror, {
   Decoration,
@@ -56,7 +56,7 @@ export const MarkdownEditor = ({
     onContentChange(val);
   };
 
-  const handleBlur = (_event: FocusEvent<HTMLDivElement>) => {
+  const handleBlur = () => {
     const view = editorViewRef.current;
     if (!view) {
       onBlur?.();

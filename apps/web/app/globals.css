@@ -158,3 +158,15 @@
 .prose pre {
   font-family: var(--font-source-code-pro), monospace !important;
 }
+
+/* Keep resize working, but hide the square outline */
+.react-flow__resize-control.line {
+  opacity: 0 !important; /* visually gone */
+  background: transparent !important;
+  border-color: transparent !important;
+  /* keep pointer-events ON (default) so edge-resize still works */
+
+  /* bigger hit area */
+  width: 12px;
+  height: 12px;
+}

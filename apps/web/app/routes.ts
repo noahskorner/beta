@@ -9,6 +9,7 @@ export const ROUTES = {
   },
   dashboard: {
     home: '/dashboard',
+    canvas: '/dashboard/canvas',
     detail: (fileId: string) => `/dashboard/${fileId}`,
   },
   external: {

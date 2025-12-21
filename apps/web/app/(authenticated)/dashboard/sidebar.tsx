@@ -4,9 +4,14 @@ import {
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { FileExplorer } from './file-explorer';
 import { cn } from '../../../lib/utils';
+import Link from 'next/link';
+import { ROUTES } from '@/app/routes';
 
 export interface SidebarProps {
   className?: string;
@@ -20,6 +25,18 @@ export async function Sidebar({ className }: SidebarProps) {
           <SidebarGroupLabel>Files</SidebarGroupLabel>
           <SidebarGroupContent>
             <FileExplorer />
+          </SidebarGroupContent>
+        </SidebarGroup>
+        <SidebarGroup>
+          <SidebarGroupLabel>Canvas</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <Link href={ROUTES.dashboard.canvas}>Canvas</Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>

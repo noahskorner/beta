@@ -30,12 +30,18 @@ export interface MarkdownEditorProps {
   content: string;
   onContentChange: (content: string) => void;
   height?: string;
+  editable?: boolean;
+  autoFocus?: boolean;
+  onBlur?: () => void;
 }
 
 export const MarkdownEditor = ({
   content,
   onContentChange,
   height = '100vh',
+  editable = true,
+  autoFocus = false,
+  onBlur,
 }: MarkdownEditorProps) => {
   const { resolvedTheme } = useTheme();
   const [value, setValue] = useState(content);
@@ -57,6 +63,9 @@ export const MarkdownEditor = ({
       theme={resolvedTheme === 'dark' ? vscodeDark : vscodeLight}
       extensions={[mdExtension, markdownPlugin]}
       onChange={onChange}
+      editable={editable}
+      autoFocus={autoFocus}
+      onBlur={onBlur}
     />
   );
 };

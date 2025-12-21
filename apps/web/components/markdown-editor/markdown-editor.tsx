@@ -21,6 +21,7 @@ import { lists } from './lists';
 import { strongs } from './strongs';
 import { tables } from './tables';
 import { horizontalRules } from './horizontal-rules';
+import { blockquotes } from './blockquotes';
 
 const mdExtension = markdown({
   codeLanguages: languages,
@@ -127,6 +128,9 @@ const markdownPlugin = ViewPlugin.fromClass(
 
           // Italics
           decorations.push(...italics(lineText, isActive, from));
+
+          // Quotes
+          decorations.push(...blockquotes(lineText, isActive, from, to));
 
           // Headings
           decorations.push(...headings(line, lineText, isActive, from, to));

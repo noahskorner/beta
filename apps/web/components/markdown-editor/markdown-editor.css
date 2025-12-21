@@ -165,6 +165,16 @@
   margin: 0.75em 0;
 }
 
+.cm-inline-code {
+  background: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: 0.25em;
+  color: var(--foreground) !important;
+  font-family: var(--font-mono), monospace;
+  font-size: 0.95em;
+  padding: 0.1em 0.25em;
+}
+
 .cm-markdown {
   color: var(--muted-foreground);
   display: none;
@@ -172,4 +182,9 @@
 
 .cm-markdown[data-active='true'] {
   display: inline;
+}
+
+.cm-superscript {
+  font-size: 0.75em;
+  vertical-align: super;
 }

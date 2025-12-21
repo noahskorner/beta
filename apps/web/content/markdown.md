@@ -25,8 +25,7 @@ This document is designed to test **all common Markdown features** supported by 
 **Bold text**  
 _Italic text_  
 **_Bold + Italic_**  
-~~Strikethrough~~  
-**Underline (HTML or extension)**
+~~Strikethrough~~
 
 Inline `code` example.
 

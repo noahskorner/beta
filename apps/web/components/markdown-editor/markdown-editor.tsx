@@ -19,9 +19,12 @@ import { headings } from './headings';
 import { italics } from './italics';
 import { lists } from './lists';
 import { strongs } from './strongs';
+import { superscripts } from './superscripts';
+import { subscripts } from './subscripts';
 import { tables } from './tables';
 import { horizontalRules } from './horizontal-rules';
 import { blockquotes } from './blockquotes';
+import { inlineCode } from './inline-code';
 
 const mdExtension = markdown({
   codeLanguages: languages,
@@ -129,6 +132,12 @@ const markdownPlugin = ViewPlugin.fromClass(
           // Italics
           decorations.push(...italics(lineText, isActive, from));
 
+          // Superscripts
+          decorations.push(...superscripts(lineText, isActive, from));
+
+          // Subscripts
+          decorations.push(...subscripts(lineText, isActive, from));
+
           // Quotes
           decorations.push(...blockquotes(lineText, isActive, from, to));
 
@@ -163,6 +172,7 @@ const markdownPlugin = ViewPlugin.fromClass(
           decorations.push(...horizontalRules(lineText, isActive, from, to));
 
           // Code
+          decorations.push(...inlineCode(lineText, isActive, from));
 
           // Increment the position
           position += lineText.length + 1;

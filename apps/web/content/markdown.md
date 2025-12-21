@@ -4,25 +4,6 @@ This document is designed to test **all common Markdown features** supported by 
 
 ---
 
-## Table of Contents
-
-- [Headings](#headings)
-- [Text Formatting](#text-formatting)
-- [Blockquotes](#blockquotes)
-- [Lists](#lists)
-- [Links & Images](#links--images)
-- [Code](#code)
-- [Tables](#tables)
-- [Task Lists](#task-lists)
-- [Footnotes](#footnotes)
-- [Horizontal Rules](#horizontal-rules)
-- [HTML](#html)
-- [Escaping Characters](#escaping-characters)
-- [Emoji](#emoji)
-- [Math (Optional)](#math-optional)
-
----
-
 ## Headings
 
 # Heading 1
@@ -61,6 +42,25 @@ Subscript: H~2~O
 > > Nested blockquote.
 > >
 > > **Formatted** inside quotes.
+
+---
+
+## Table of Contents
+
+- [Headings](#headings)
+- [Text Formatting](#text-formatting)
+- [Blockquotes](#blockquotes)
+- [Lists](#lists)
+- [Links & Images](#links--images)
+- [Code](#code)
+- [Tables](#tables)
+- [Task Lists](#task-lists)
+- [Footnotes](#footnotes)
+- [Horizontal Rules](#horizontal-rules)
+- [HTML](#html)
+- [Escaping Characters](#escaping-characters)
+- [Emoji](#emoji)
+- [Math (Optional)](#math-optional)
 
 ---
 

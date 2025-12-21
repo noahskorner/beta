@@ -8,6 +8,14 @@
   background-color: transparent !important;
 }
 
+.cm-editor {
+  height: auto;
+}
+
+.cm-editor .cm-scroller {
+  overflow: visible !important;
+}
+
 .cm-editor .cm-content,
 .cm-editor .cm-line {
   color: hsl(var(--color-foreground)) !important;

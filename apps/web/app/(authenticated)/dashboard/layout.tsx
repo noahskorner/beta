@@ -1,6 +1,6 @@
 import { cookies } from 'next/headers';
 import { Sidebar } from './sidebar';
-import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
+import { SidebarProvider } from '@/components/ui/sidebar';
 import { FilesProvider } from './file-context';
 import { FindFilesFacade } from '../../api/files/find-files.facade';
 import { FindFileResponse } from '../../api/files/find-files.response';
@@ -33,14 +33,14 @@ export default async function Layout({ children }: { children: React.ReactNode }
   const files = await loadFiles();
 
   return (
-    <SidebarProvider defaultOpen={defaultOpen} className="flex-col relative">
+    <SidebarProvider defaultOpen={defaultOpen}>
       <FilesProvider files={files}>
-        <Toolbar email={email} name={session?.user?.name} />
-        <div className="flex flex-1 min-h-0 w-full">
-          <Sidebar className="md:top-11 md:h-[calc(100svh-2.5rem)]" />
-          <SidebarInset className="flex-1 min-h-0">
-            <main className="flex-1 overflow-auto">{children}</main>
-          </SidebarInset>
+        <div className="w-screen h-screen overflow-hidden relative">
+          <Toolbar email={email} name={session?.user?.name} />
+          <div className="flex flex-1 w-full pt-11">
+            <Sidebar className="md:top-11 md:h-[calc(100svh-2.5rem)]" />
+            <main className="w-full h-[calc(100svh-2.5rem)] overflow-auto">{children}</main>
+          </div>
         </div>
       </FilesProvider>
     </SidebarProvider>

@@ -39,7 +39,7 @@ export interface MarkdownEditorProps {
 export const MarkdownEditor = ({
   content,
   onContentChange,
-  height = '100vh',
+  height = 'auto',
   editable = true,
   autoFocus = false,
   onBlur,
@@ -73,7 +73,7 @@ export const MarkdownEditor = ({
 
   return (
     <CodeMirror
-      className="w-full h-full outline-none bg-transparent"
+      className="w-full outline-none bg-transparent"
       value={value}
       height={height}
       theme={resolvedTheme === 'dark' ? vscodeDark : vscodeLight}

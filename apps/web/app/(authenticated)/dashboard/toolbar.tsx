@@ -38,7 +38,7 @@ export function Toolbar({ email, name }: ToolbarProps) {
   );
 
   return (
-    <header className="flex h-11 w-full items-center justify-between border-b bg-sidebar px-2">
+    <header className="flex h-11 w-full items-center justify-between border-b bg-sidebar px-2 fixed top-0 z-10">
       <div className="flex items-center justify-between">
         <SidebarTrigger variant="ghost" size="icon" />
         <Separator orientation="vertical" className="h-6" />

@@ -18,12 +18,8 @@ export default async function FilePage({ params }: FilePageProps) {
   const MOCK_FILE_CONTENT = await loadFile('markdown.md');
 
   return (
-    <div className="w-full h-full flex items-stretch justify-center">
-      <div className="w-full h-full flex p-8 pt-12 justify-center">
-        <div className="w-full max-w-3xl">
-          <File id={id} content={MOCK_FILE_CONTENT} />
-        </div>
-      </div>
+    <div className="w-full max-w-3xl mx-auto">
+      <File id={id} content={MOCK_FILE_CONTENT} />
     </div>
   );
 }
